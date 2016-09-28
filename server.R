@@ -6,12 +6,29 @@ server = function(input, output, session) {
     output$choose_dataset <- renderUI({
         selectInput("dataset", "Data set", as.list(data_sets))
     })
-
-    observeEvent(input$dataset, ({
+    
+    myData <- reactive({
+        inFile <- input$file1
+        if (is.null(inFile)) return(NULL)
+        data <- read.csv(inFile$datapath, header=input$header, sep=input$sep, 
+                         quote=input$quote)
+        data
+    })
+    output$contents <- renderTable({
+        myData()
+    })
+    
+    observeEvent(myData(), ({
+        output$text1 <- renderText({ 
+            data <- myData()
+            colnames <- names(data)
+            paste("You data has ", dim(data)[1], " rows and ", dim(data)[2], " columns.")
+        })
+        
         output$x_axis <- renderUI({
             # Get the data set with the appropriate name
-            dat <- get(input$dataset)
-            colnames <- names(dat)
+            data <- myData()
+            colnames <- names(data)
             
             selectInput("x_axis", "x-axis",  as.list(colnames))
         })
@@ -22,8 +39,8 @@ server = function(input, output, session) {
                 return()
             
             # Get the data set with the appropriate name
-            dat <- get(input$dataset)
-            colnames <- names(dat)
+            data <- myData()
+            colnames <- names(data)
             
             selectInput("y_axis", "y-axis",  as.list(colnames))
         })
@@ -64,11 +81,11 @@ server = function(input, output, session) {
         
         
         plotInput <- function(){
-            dat <- get(input$dataset)
-            pc <- ggplot(get(input$dataset), aes_string(input$x_axis, y=input$y_axis)) +
+            data <- myData()
+            pc <- ggplot(data, aes_string(input$x_axis, y=input$y_axis)) +
                 geom_point() +
                 labs(x=input$x_axis,y=input$y_axis) +
-                ggtitle(input$dataset) +
+                #ggtitle(input$dataset) +
                 theme_bw()
             
             p <- switch(input$ggplot_scaletype,
@@ -144,9 +161,9 @@ server = function(input, output, session) {
         )
         
         output$plot_clicked_points <- DT::renderDataTable({
-            dat <- get(input$dataset)
+            data <- myData()
             
-            res <- nearPoints(dat, input$plot_click,
+            res <- nearPoints(data, input$plot_click,
                               threshold = input$max_distance, maxpoints = input$max_points,
                               addDist = TRUE)
             
@@ -156,8 +173,8 @@ server = function(input, output, session) {
         })
         
         output$plot_brushed_points <- DT::renderDataTable({
-            dat <- get(input$dataset)
-            res <- brushedPoints(dat, input$plot_brush)
+            data <- myData()
+            res <- brushedPoints(data, input$plot_brush)
             
             datatable(res)
         })
