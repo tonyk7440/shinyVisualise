@@ -1,15 +1,19 @@
 data_sets <- c("mtcars", "diamonds")
 
-output$choose_dataset <- renderUI({
-    selectInput("dataset", "Data set", as.list(data_sets))
-})
-
 myData <- reactive({
-    inFile <- input$file1
-    if (is.null(inFile)) return(NULL)
-    data <- read.csv(inFile$datapath, header=input$header, sep=input$sep, 
-                     quote=input$quote)
-    data
+        if(input$smooth == TRUE){
+            data <- switch(input$example_ds,
+                           "mtcars" = mtcars) 
+            data
+        }
+        else{
+            inFile <- input$file1
+            if (is.null(inFile)) return(NULL)
+            data <- read.csv(inFile$datapath, header=input$header, sep=input$sep, 
+                             quote=input$quote)
+            data   
+        }
+
 })
 output$contents <- renderTable({
     myData()

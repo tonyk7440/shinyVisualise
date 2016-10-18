@@ -2,9 +2,8 @@ tabPanel("Data",
          sidebarLayout(
              sidebarPanel(
                  checkboxInput("smooth", "Use Example Dataset"),
-                 conditionalPanel(
-                     condition = "input.smooth == true",
-                     uiOutput("choose_dataset")
+                 conditionalPanel("input.smooth == true",
+                     selectInput("example_ds", "Data set", choices = c("mtcars"))
                  ),
                  fileInput('file1', 'Choose CSV File',
                            accept=c('text/csv', 
