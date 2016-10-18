@@ -17,16 +17,24 @@ observeEvent(myData(), ({
     })
     
     output$y_axis <- renderUI({
-        # If missing input, return to avoid error later in function
-        if(is.null(input$dataset))
-            return()
-        
         # Get the data set with the appropriate name
         colnames <- names(myData())
         
         selectInput("y_axis", "y-axis",  as.list(colnames))
     })
     
+    observe({
+        # We'll use the input$controller variable multiple times, so save it as x
+        # for convenience.
+        t <- "Title"
+        x <- input$x_axis
+        y <- input$y_axis
+        
+        # This will change the value of input$inText, based on x
+        updateTextInput(session, inputId = "title", value = t)
+        updateTextInput(session, inputId = "x_label", value = x)
+        updateTextInput(session, inputId = "y_label", value = y)
+    })
     # Name of the x, y, and faceting variables
     xvar <- reactive({
         if (input$ggplot_scaletype == "x_factor")
@@ -65,8 +73,8 @@ observeEvent(myData(), ({
     plotInput <- function(){
         pc <- ggplot(myData(), aes_string(input$x_axis, y=input$y_axis)) +
             geom_point() +
-            labs(x=input$x_axis,y=input$y_axis) +
-            #ggtitle(input$dataset) +
+            labs(x=input$x_label,y=input$y_label) +
+            ggtitle(input$title) +
             theme_bw()
         
         p <- switch(input$ggplot_scaletype,

@@ -1,5 +1,3 @@
-data_sets <- c("mtcars", "diamonds")
-
 myData <- reactive({
         if(input$smooth == TRUE){
             data <- switch(input$example_ds,
@@ -15,6 +13,8 @@ myData <- reactive({
         }
 
 })
+
+# Render the data table on tab 1
 output$contents <- renderTable({
     myData()
 })

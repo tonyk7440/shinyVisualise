@@ -3,8 +3,8 @@ title: shinyVisualise
 account: tonyk
 server: shinyapps.io
 appId: 128157
-bundleId: 589615
+bundleId: 589651
 url: https://tonyk.shinyapps.io/plottingdata/
-when: 1476792425.84384
+when: 1476794667.23847
 asMultiple: FALSE
 asStatic: FALSE

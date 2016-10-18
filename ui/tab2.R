@@ -27,6 +27,9 @@ tabPanel("Plot",
                  div(class = "option-header", "Brush"),
                  radioButtons("brush_dir", "Direction(s)",
                               c("xy", "x", "y"), inline = TRUE),
+                 textInput("title", "title"),
+                 textInput("x_label", "X-label"),
+                 textInput("y_label", "Y-label"),
                  checkboxInput("brush_reset", "Reset on new image")
              ),
              mainPanel(
